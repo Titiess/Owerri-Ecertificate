@@ -1,0 +1,150 @@
+.verifyPage {
+  min-height: 100vh;
+  background: var(--color-neutral-100);
+  padding: var(--space-8) var(--space-4);
+}
+
+.verifyContainer {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.verifyHeader {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.verifyLogo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  text-decoration: none;
+  color: inherit;
+  margin-bottom: var(--space-6);
+}
+
+.verifyTitle {
+  font-family: var(--font-heading);
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-neutral-900);
+  margin-bottom: var(--space-2);
+}
+
+.verifySubtitle {
+  font-size: var(--text-sm);
+  color: var(--color-neutral-700);
+}
+
+.verifyCard {
+  background: var(--color-white);
+  border: 1px solid var(--color-neutral-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.verifyCardAccent {
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-primary-light));
+}
+
+.verifyCardBody {
+  padding: var(--space-6);
+}
+
+.verifyForm {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-end;
+}
+
+.verifyFormInput {
+  flex: 1;
+}
+
+/* Result states */
+.resultBox {
+  margin-top: var(--space-6);
+  padding: var(--space-6);
+  border-radius: var(--radius-lg);
+  animation: fadeIn 0.3s ease forwards;
+}
+
+.resultValid {
+  background: var(--color-success-light);
+  border: 1px solid rgba(46, 125, 50, 0.2);
+}
+
+.resultInvalid {
+  background: var(--color-warning-light);
+  border: 1px solid rgba(230, 140, 0, 0.2);
+}
+
+.resultNotFound {
+  background: var(--color-error-light);
+  border: 1px solid rgba(198, 40, 40, 0.2);
+}
+
+.resultBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  margin-bottom: var(--space-4);
+}
+
+.resultBadgeValid {
+  background: var(--color-success);
+  color: var(--color-white);
+}
+
+.resultBadgeInvalid {
+  background: var(--color-warning);
+  color: var(--color-white);
+}
+
+.resultBadgeNotFound {
+  background: var(--color-error);
+  color: var(--color-white);
+}
+
+.resultGrid {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: var(--space-1) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.resultLabel {
+  color: var(--color-neutral-500);
+  padding: var(--space-1) 0;
+}
+
+.resultValue {
+  color: var(--color-neutral-900);
+  font-weight: 500;
+  padding: var(--space-1) 0;
+}
+
+.trustNote {
+  text-align: center;
+  margin-top: var(--space-8);
+  padding: var(--space-4);
+  font-size: var(--text-xs);
+  color: var(--color-neutral-400);
+}
+
+@media (max-width: 640px) {
+  .verifyForm {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .resultGrid {
+    grid-template-columns: 1fr;
+  }
+}

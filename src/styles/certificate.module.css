@@ -1,0 +1,235 @@
+@import url('https://fonts.googleapis.com/css2?family=UnifrakturMaguntia&family=Great+Vibes&family=Times+New+Roman&display=swap');
+
+.certificatePage {
+    background-color: #525659;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 40px 20px;
+    font-family: 'Times New Roman', Times, serif;
+}
+
+/* A4 Print Size (210mm x 297mm) */
+.certificateWrapper {
+    background-color: white;
+    width: 210mm;
+    height: 297mm;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+    position: relative;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+/* Background Template Scan */
+.backgroundTemplate {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    /* Optional: uncomment if an actual scanned image is placed in public */
+    background-image: url('/templates/certificate-template.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Anti-Photocopy Microtext Security Pattern */
+.securityPattern {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+    opacity: 0.04;
+    font-size: 6px;
+    letter-spacing: 2px;
+    line-height: 1.5;
+    color: #000;
+    overflow: hidden;
+    word-break: break-all;
+    white-space: pre-wrap;
+    font-family: monospace;
+}
+
+/* Watermark */
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    opacity: 0.06;
+    pointer-events: none;
+    z-index: 3;
+}
+
+/* Field Overlay Layer */
+.contentOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    padding: 20mm;
+    box-sizing: border-box;
+}
+
+/* Absolute Positioned Fields to match scan */
+.field {
+    position: absolute;
+    font-family: 'Times New Roman', Times, serif;
+    font-size: 16px;
+    font-style: italic;
+    font-weight: 600;
+    color: #000;
+    white-space: nowrap;
+}
+
+/* Example coordinate mapping based on visual estimation of the A4 scan */
+.refNumber { top: 68mm; left: 35mm; }
+.issueDate { top: 68mm; left: 140mm; }
+
+.bearerName { top: 125mm; left: 45mm; font-size: 20px; }
+.nativeOf { top: 138mm; left: 60mm; font-size: 18px; }
+
+.feeAmount { top: 220mm; left: 42mm; }
+.rcrNumber { top: 232mm; left: 42mm; }
+.paidDateDay { top: 244mm; left: 25mm; }
+.paidDateMonth { top: 244mm; left: 40mm; }
+.paidDateYearDigit { top: 244mm; left: 60mm; }
+
+/* Signatures */
+.chairmanSignature {
+    position: absolute;
+    top: 222mm;
+    left: 130mm;
+    width: 120px;
+    height: 50px;
+    object-fit: contain;
+}
+
+.secretarySignature {
+    position: absolute;
+    top: 235mm;
+    left: 140mm;
+    width: 120px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* Security Elements */
+.digitalSecurityBox {
+    position: absolute;
+    bottom: 15mm;
+    left: 15mm;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.qrCode {
+    width: 65px;
+    height: 65px;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 2px;
+}
+
+.securityText {
+    font-size: 10px;
+    line-height: 1.4;
+    color: #333;
+}
+
+.documentCode {
+    position: absolute;
+    bottom: 15mm;
+    right: 15mm;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 12px;
+    font-weight: bold;
+    color: #000;
+    border: 1px solid #ccc;
+    padding: 4px 8px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.timestamp {
+    position: absolute;
+    bottom: 25mm;
+    right: 15mm;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 10px;
+    color: #555;
+    text-align: right;
+}
+
+/* Action panel for printing */
+.actionPanel {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+@media print {
+    @page { 
+        size: A4; 
+        margin: 0; 
+    }
+    
+    body { 
+        -webkit-print-color-adjust: exact !important; 
+        print-color-adjust: exact !important; 
+    }
+    
+    .certificatePage {
+        background: none;
+        padding: 0;
+        min-height: auto;
+    }
+
+    .certificateWrapper {
+        box-shadow: none;
+        width: 210mm;
+        height: 297mm;
+        transform: none !important;
+    }
+
+    .actionPanel {
+        display: none !important;
+    }
+}
+
+/* Mobile Responsiveness for the A4 Certificate View */
+@media (max-width: 850px) {
+    .certificatePage {
+        padding: 20px 0;
+        overflow-x: hidden;
+    }
+    
+    .certificateWrapper {
+        /* Scale down the rigid A4 coordinates using CSS transform based on viewport width */
+        transform-origin: top center;
+        transform: scale(calc(100vw / 850));
+        /* Ensure the scaled component does not create massive vertical white space */
+        margin-bottom: calc(-297mm * (1 - (100vw / 850)));
+    }
+}
+
+@media (max-width: 600px) {
+    .actionPanel {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+        position: fixed;
+    }
+}

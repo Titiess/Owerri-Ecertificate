@@ -1,0 +1,151 @@
+// Owerri Municipal Council E-Certificate Platform
+// Database Schema - PostgreSQL via Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum AdminRole {
+  CHAIRMAN
+  ADMIN
+}
+
+enum CertificateType {
+  STATE_OF_ORIGIN
+  // Future types: INDIGENE, BIRTH_CERTIFICATE, etc.
+}
+
+enum ApplicationStatus {
+  PAYMENT_PENDING
+  PENDING_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+// ============================================
+// MODELS
+// ============================================
+
+/// Public-facing applicant accounts
+model Applicant {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  fullName     String
+  phone        String
+  dateOfBirth  DateTime
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  applications Application[]
+
+  @@map("applicants")
+}
+
+/// Admin users (Chairman + Office Workers) — accounts created by Chairman only
+model AdminUser {
+  id           String    @id @default(uuid())
+  username     String    @unique
+  passwordHash String
+  role         AdminRole
+  name         String
+  signatureUrl String?   // Only used for CHAIRMAN role
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+
+  approvedApplications  Application[] @relation("ApprovedBy")
+  chairmanApplications  Application[] @relation("ApprovalChairman")
+  auditLogs             AuditLog[]
+
+  @@map("admin_users")
+}
+
+/// Certificate applications submitted by applicants
+model Application {
+  id                   String            @id @default(uuid())
+  referenceNo          String            @unique
+  applicantId          String
+  applicantName        String
+  dateOfBirth          DateTime
+  nativeOf             String
+  lga                  String
+  stateOfOrigin        String
+  fatherName           String
+  motherName           String
+  purpose              String
+  certificateType      CertificateType   @default(STATE_OF_ORIGIN)
+  status               ApplicationStatus @default(PAYMENT_PENDING)
+  rejectionReason      String?
+  paymentReference     String?
+  paymentStatus        PaymentStatus     @default(PENDING)
+  paidAt               DateTime?
+  hash                 String?           @unique
+  certificatePdfUrl    String?
+  approvedById         String?
+  approvalChairmanId   String?
+  approvalSignatureUrl String?
+  approvedAt           DateTime?
+  createdAt            DateTime          @default(now())
+  updatedAt            DateTime          @updatedAt
+
+  applicant        Applicant  @relation(fields: [applicantId], references: [id])
+  approvedBy       AdminUser? @relation("ApprovedBy", fields: [approvedById], references: [id])
+  approvalChairman AdminUser? @relation("ApprovalChairman", fields: [approvalChairmanId], references: [id])
+  files            ApplicationFile[]
+
+  @@index([applicantId])
+  @@index([status])
+  @@index([certificateType])
+  @@index([paymentStatus])
+  @@map("applications")
+}
+
+/// Future-ready file uploads per application (passport photos, supporting docs)
+model ApplicationFile {
+  id            String   @id @default(uuid())
+  applicationId String
+  fileType      String   // e.g., "PASSPORT_PHOTO", "SUPPORTING_DOCUMENT"
+  fileUrl       String
+  fileName      String
+  fileSizeBytes Int
+  uploadedAt    DateTime @default(now())
+
+  application Application @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+
+  @@index([applicationId])
+  @@map("application_files")
+}
+
+/// Immutable audit log — every admin action is recorded
+model AuditLog {
+  id           String   @id @default(uuid())
+  userId       String?
+  action       String   // e.g., "APPLICATION_APPROVED", "CERTIFICATE_GENERATED"
+  resourceType String   // e.g., "Application", "AdminUser"
+  resourceId   String?
+  details      Json?
+  ipAddress    String?
+  timestamp    DateTime @default(now())
+
+  user AdminUser? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+  @@map("audit_logs")
+}
